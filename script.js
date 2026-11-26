@@ -385,6 +385,22 @@
     media.appendChild(btn);
     box.appendChild(media);
     if (counterEl) box.appendChild(counterEl);
+    if (counterEl) {
+      /* the counter keeps one fixed width (the widest number, e.g. "14/14") and its text is aligned to the right,
+         so 5/14 and 14/14 both end at the same place */
+      var fixCounter = function () {
+        var keep = counterEl.textContent, w = 0, total = list.length;
+        counterEl.style.minWidth = '0';
+        for (var i = 1; i <= total; i++) {
+          counterEl.textContent = i + '/' + total;
+          w = Math.max(w, counterEl.getBoundingClientRect().width);
+        }
+        counterEl.textContent = keep;
+        counterEl.style.minWidth = Math.ceil(w) + 'px';
+      };
+      requestAnimationFrame(fixCounter);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fixCounter);
+    }
     if (p.desc) box.appendChild(d);
     item.appendChild(box);
     root.appendChild(item);
