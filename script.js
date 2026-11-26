@@ -286,14 +286,28 @@
           if (p.zoom) return x < 1 / 3 ? 'l' : (x > 2 / 3 ? 'r' : 'm');
           return x < 0.5 ? 'l' : 'r';
         }
-        /* only the next picture is loaded in advance (not all of them at once) */
-        function preload(k) { if (multi) new Image().src = list[(k + list.length) % list.length]; }
+        /* Pictures are kept in memory once loaded. The old picture stays on screen until the next one
+           is loaded and ready, so there is no white flash when you click. */
+        var cache = {}, token = 0;
+        function get(k) {
+          k = (k + list.length) % list.length;
+          if (!cache[k]) { var t = new Image(); t.decoding = 'async'; t.src = list[k]; cache[k] = t; }
+          return cache[k];
+        }
+        function preload(k) { if (multi) get(k); }
         im.addEventListener('load', function once() { im.removeEventListener('load', once); preload(1); });
         function show(k) {
           n = (k + list.length) % list.length;
-          im.src = list[n];
-          counterEl.textContent = (n + 1) + '/' + list.length;
-          preload(n + 1);
+          var my = ++token, t = get(n);
+          function apply() {
+            if (my !== token) return;          /* a newer click has taken over */
+            im.src = list[n];
+            counterEl.textContent = (n + 1) + '/' + list.length;
+            preload(n + 1); preload(n - 1);
+          }
+          function ready() { (t.decode ? t.decode() : Promise.resolve()).then(apply, apply); }
+          if (t.complete && t.naturalWidth) ready();
+          else { t.addEventListener('load', ready, { once: true }); t.addEventListener('error', apply, { once: true }); }
         }
         /* zoom (works with  zoom: 4  = 4 times bigger): the image grows inside its own frame and follows the mouse,
            so you can look at every corner. Click again (or press Esc) to zoom out. */
