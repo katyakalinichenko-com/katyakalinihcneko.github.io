@@ -29,10 +29,7 @@
   padding-bottom:env(safe-area-inset-bottom,0px);
   color-scheme:light;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){ --bg:#111; --fg:#f2f2f2; --ph-note:rgba(255,255,255,.35); color-scheme:dark; }
-}
-:root[data-theme="dark"]{ --bg:#111; --fg:#f2f2f2; --ph-note:rgba(255,255,255,.35); color-scheme:dark; }
+/* the site is always white (it does not follow the dark mode of the device) */
 html{ scroll-padding-top:env(safe-area-inset-top,0px); }
 *,*::before,*::after{ box-sizing:inherit; }
 
@@ -166,12 +163,12 @@ header{ padding:0 0 17px; }
   .box{ width:min(100%, calc(var(--w) + 17%)) !important; }
 }
 
-/* PHONE (up to 700px wide): every project is full width, one under the other, text under the picture */
+/* PHONE (up to 700px wide): pictures are 78% wide and keep their left / centre / right placement, text under the picture */
 @media (max-width:700px){
   body{ font-size:14px; }
   .intro{ flex-direction:column; gap:6px; }
-  .box{ width:100% !important; }
-  .item.l,.item.c,.item.r{ justify-content:flex-start; }
+  .side{ flex:none; width:100%; max-width:none; }   /* (in a column the 970px bio width would become a height) */
+  .box{ width:78% !important; }   /* a little narrower than the screen, so left / centre / right still show */
   .desc{ margin-left:0; padding:8px 6px 0; }
   .counter{ position:static; display:block; padding:4px 6px 0; text-align:left; min-width:0 !important; }
 }
