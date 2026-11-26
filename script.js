@@ -104,10 +104,28 @@
   var bubbles = [nameBtn];
   var tags = [];   /* the project names that stack at the top while scrolling */
 
+  /* TYPOGRAPHY: short words (I, a, of, in, the ...) stay together with the word that follows them, and the last two
+     words of a text always stay together, so no lonely "I" / "The" at the end of a line and no single word on the last line. */
+  function tidy(el) {
+    var nodes = [], w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null), x;
+    while ((x = w.nextNode())) nodes.push(x);
+    nodes.forEach(function (t) {
+      t.nodeValue = t.nodeValue.replace(/(^|\s)([^\s.,;:!?\u2014]{1,2}|[Tt]he)[ ]+(?=\S|$)/g, '$1$2\u00A0');
+    });
+    for (var i = nodes.length - 1; i >= 0; i--) {          /* the last two words */
+      var v = nodes[i].nodeValue;
+      if (/\S\s+\S+\s*$/.test(v)) { nodes[i].nodeValue = v.replace(/(\S)\s+(\S+\s*)$/, '$1\u00A0$2'); break; }
+      if (/^\s*\S*\s*$/.test(v) && i > 0 && /\S\s+$/.test(nodes[i - 1].nodeValue)) {
+        nodes[i - 1].nodeValue = nodes[i - 1].nodeValue.replace(/\s+$/, '\u00A0'); break;
+      }
+    }
+  }
+
   /* bio: closed at first, opens / closes (fade + slide) only when the name is clicked.
      The styles are set here so it works whatever else is in style.css. */
   var bioClip = bio.querySelector('.bio-clip');
   var bioText = bio.querySelector('.bio');
+  tidy(bioText);
   var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var bioOpen = false;
   function paintBio(animate) {
@@ -370,6 +388,7 @@
       if (first) { d.replaceChild(lk, first); lk.appendChild(first); }
       else { lk.textContent = 'Watch the video'; d.appendChild(lk); }
     }
+    tidy(d);
     btn.addEventListener('click', function () {
       randomColor(btn);
       if (tag.stuck) goToProject(tag);        /* stacked at the top: go back to its project */

@@ -151,6 +151,7 @@ header{ padding:0 0 17px; }
 .desc{ margin:0 0 0 var(--text-indent); padding:var(--desc-gap) 0 0; }
 
 .desc strong{ font-weight:var(--bold-weight); }
+.desc,.bio{ text-wrap:pretty; }
 .desc em,.bio em{ font-style:italic; }
 .desc .desc-link{ text-decoration:underline; text-underline-offset:2px; }
 
@@ -166,8 +167,15 @@ header{ padding:0 0 17px; }
 /* PHONE (up to 700px wide): pictures are 78% wide and keep their left / centre / right placement, text under the picture */
 @media (max-width:700px){
   body{ font-size:14px; }
-  .intro{ flex-direction:column; gap:6px; }
-  .side{ flex:none; width:100%; max-width:none; }   /* (in a column the 970px bio width would become a height) */
+  /* like on the computer: the name on the left, the bio opens to the right of it (empty space under the name);
+     the email line sits under both, starting at the same distance from the edge as the descriptions */
+  .intro{ display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:var(--gap); row-gap:6px; align-items:baseline; }
+  .side{ display:contents; }
+  .side::before{ display:none; }
+  #name{ grid-column:1; grid-row:1; }
+  .bio-wrap{ grid-column:2; grid-row:1; }
+  .contact{ grid-column:1 / -1; grid-row:2; padding:0 6px; }
+  .bio{ padding-bottom:0; }
   .box{ width:78% !important; }   /* a little narrower than the screen, so left / centre / right still show */
   .desc{ margin-left:0; padding:8px 6px 0; }
   .counter{ position:static; display:block; padding:4px 6px 0; text-align:left; min-width:0 !important; }
