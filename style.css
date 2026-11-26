@@ -161,12 +161,24 @@ header{ padding:0 0 17px; }
 .counter{ position:absolute; top:6px; left:calc(100% + var(--gap)); font-family:var(--font-numbers); font-size:calc(1em + var(--bubble-grow)); line-height:1; white-space:nowrap; text-align:right; }
 .item.r .counter{ left:auto; right:calc(100% + var(--gap)); }
 
+/* TABLET (up to 1100px wide): the pictures are bigger (about 17% wider than the numbers in script.js) */
+@media (max-width:1100px){
+  .box{ width:min(100%, calc(var(--w) + 17%)) !important; }
+}
+
+/* PHONE (up to 700px wide): every project is full width, one under the other, text under the picture */
 @media (max-width:700px){
   body{ font-size:14px; }
   .intro{ flex-direction:column; gap:6px; }
-  .box{ width:90%; }
+  .box{ width:100% !important; }
+  .item.l,.item.c,.item.r{ justify-content:flex-start; }
   .desc{ margin-left:0; padding:8px 6px 0; }
   .counter{ position:static; display:block; padding:4px 6px 0; text-align:left; min-width:0 !important; }
+}
+
+/* touch screens: bigger tap area for the coloured titles */
+@media (pointer:coarse){
+  .bubble{ padding:4px 9px; }
 }
 
 @media (prefers-reduced-motion: reduce){
