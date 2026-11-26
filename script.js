@@ -129,6 +129,7 @@
   var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var bioOpen = false;
   var phoneMQ = window.matchMedia('(max-width:700px)');
+  var bioTimer = null;
   function paintBio(animate) {
     var t = (animate && !calm);
     bio.style.display = 'grid';
@@ -140,13 +141,25 @@
     bioClip.style.opacity = bioOpen ? '1' : '0';
     bioClip.style.visibility = bioOpen ? 'visible' : 'hidden';
     bioText.style.opacity = '1';
-    /* PHONE: the height of the bio is set here in pixels (more reliable on iPhones than the grid trick above) */
+    /* PHONE: the bio opens by height (more reliable on iPhones than the grid trick above); once open it is simply "auto" */
+    clearTimeout(bioTimer);
     if (phoneMQ.matches) {
       bio.style.display = 'block';
       bio.style.overflow = 'hidden';
       bio.style.gridTemplateRows = '';
-      bio.style.transition = t ? 'height .8s cubic-bezier(.4,0,.2,1)' : 'none';
-      bio.style.height = bioOpen ? bioClip.scrollHeight + 'px' : '0px';
+      if (!t) {
+        bio.style.transition = 'none';
+        bio.style.height = bioOpen ? 'auto' : '0px';
+      } else if (bioOpen) {
+        bio.style.transition = 'none'; bio.style.height = '0px'; void bio.offsetHeight;
+        bio.style.transition = 'height .8s cubic-bezier(.4,0,.2,1)';
+        bio.style.height = Math.max(bioClip.scrollHeight, bioText.offsetHeight) + 'px';
+        bioTimer = setTimeout(function () { bio.style.transition = 'none'; bio.style.height = 'auto'; }, 900);
+      } else {
+        bio.style.transition = 'none'; bio.style.height = bio.offsetHeight + 'px'; void bio.offsetHeight;
+        bio.style.transition = 'height .8s cubic-bezier(.4,0,.2,1)';
+        bio.style.height = '0px';
+      }
     } else {
       bio.style.height = ''; bio.style.overflow = '';
     }

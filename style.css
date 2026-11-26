@@ -30,6 +30,7 @@
   color-scheme:light;
 }
 /* the site is always white (it does not follow the dark mode of the device) */
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }   /* iPhones must not enlarge some texts when turned sideways */
 html{ scroll-padding-top:env(safe-area-inset-top,0px); }
 *,*::before,*::after{ box-sizing:inherit; }
 
