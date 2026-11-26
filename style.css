@@ -169,11 +169,11 @@ header{ padding:0 0 17px; }
   body{ font-size:14px; }
   /* like on the computer: the name on the left, the bio opens to the right of it (empty space under the name);
      the email line sits under both, starting at the same distance from the edge as the descriptions */
-  .intro{ display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:var(--gap); row-gap:6px; align-items:baseline; }
+  .intro{ display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:var(--gap); row-gap:6px; align-items:start; }
   .side{ display:contents; }
   .side::before{ display:none; }
   #name{ grid-column:1; grid-row:1; }
-  .bio-wrap{ grid-column:2; grid-row:1; }
+  .bio-wrap{ grid-column:2; grid-row:1; display:block !important; margin-top:7px; }   /* (height is set by script.js) */
   .contact{ grid-column:1 / -1; grid-row:2; padding:0 6px; }
   .bio{ padding-bottom:0; }
   .box{ width:78% !important; }   /* a little narrower than the screen, so left / centre / right still show */

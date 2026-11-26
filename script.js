@@ -128,6 +128,7 @@
   tidy(bioText);
   var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var bioOpen = false;
+  var phoneMQ = window.matchMedia('(max-width:700px)');
   function paintBio(animate) {
     var t = (animate && !calm);
     bio.style.display = 'grid';
@@ -139,8 +140,23 @@
     bioClip.style.opacity = bioOpen ? '1' : '0';
     bioClip.style.visibility = bioOpen ? 'visible' : 'hidden';
     bioText.style.opacity = '1';
+    /* PHONE: the height of the bio is set here in pixels (more reliable on iPhones than the grid trick above) */
+    if (phoneMQ.matches) {
+      bio.style.display = 'block';
+      bio.style.overflow = 'hidden';
+      bio.style.gridTemplateRows = '';
+      bio.style.transition = t ? 'height .8s cubic-bezier(.4,0,.2,1)' : 'none';
+      bio.style.height = bioOpen ? bioClip.scrollHeight + 'px' : '0px';
+    } else {
+      bio.style.height = ''; bio.style.overflow = '';
+    }
   }
   paintBio(false);
+  /* the bio text changes height when the window turns / resizes or the fonts arrive */
+  function refitBio() { paintBio(false); }
+  window.addEventListener('resize', refitBio);
+  window.addEventListener('load', refitBio);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(refitBio);
   nameBtn.addEventListener('click', function () {
     bioOpen = !bioOpen;
     paintBio(true);
